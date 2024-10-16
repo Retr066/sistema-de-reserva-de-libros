@@ -1,6 +1,22 @@
-const mongoose = require('mongoose');
+import { Schema, model, Document } from 'mongoose';
 
-const bookSchema = new mongoose.Schema({
+interface IBook extends Document {
+  title: string;
+  author: string;
+  category: string;
+  isbn: string;
+  publicationDate: Date;
+  quantity: number;
+  availableQuantity: number;
+  location: {
+    shelf: string;
+    aisle: string;
+  };
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+const bookSchema = new Schema<IBook>({
   title: { type: String, required: true },
   author: { type: String, required: true },
   category: { type: String, required: true },
@@ -14,4 +30,4 @@ const bookSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-module.exports = mongoose.model('Book', bookSchema);
+export default model<IBook>('Book', bookSchema);
