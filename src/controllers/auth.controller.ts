@@ -10,6 +10,10 @@ import jwt from 'jsonwebtoken';
 const register = async (req: Request, res: Response) => {
     try {
         const { name, email, password, identificationNumber } = req.body;
+        const findUser = await User.findOne({ email });
+        if (findUser) {
+          return res.status(400).json({ message: 'El email ya está registrado' });
+        }
         const user = new User({ name, email, password, identificationNumber });
         await user.save();
         const response =  createSuccessResponse(user, 'Usuario registrado correctamente');
@@ -29,7 +33,7 @@ const login = async (req:Request, res:Response) => {
         return res.status(401).json({ error: 'Credenciales incorrectas' });
       }
       const token = jwt.sign({ userId: user._id, role: user.role }, configENV.JWT_SECRET, { expiresIn: '1d' });
-      res.json({ token });
+      res.json({ token , user });
     } catch (error : any) {
       const e = error as Error;
       handleHttp(res, ErrorType.INTERNAL_ERROR, e.message);

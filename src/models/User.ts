@@ -17,7 +17,18 @@ const userSchema: Schema<IUser> = new Schema({
   password: { type: String, required: true },
   identificationNumber: { type: String, required: true, unique: true },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  toJSON: {
+    transform: function (_, ret) {
+      ret.id = ret._id;
+      delete ret.__v;
+      delete ret.password;
+      delete ret._id;
+      return ret;
+    }
+  }
+});
 
 // Middleware para encriptar la contraseña antes de guardar
 userSchema.pre('save', async function (next) {
