@@ -1,5 +1,8 @@
 import Book from "@models/Book";
 import { Request, Response } from "express";
+import { handleError } from "@utils/handleError";
+import { ErrorType } from "@enums/ErrorType";
+import { handleResponse } from "@utils/createResponse";
 
 const findBooks = async (req: Request, res: Response) => {
     try {
@@ -22,6 +25,13 @@ const findBooks = async (req: Request, res: Response) => {
 const createBook = async (req: Request, res: Response) => {
     try {
       const { title, author, category, isbn, publicationDate, quantity, location } = req.body;
+
+      const existingBook = await Book.findOne({ isbn });
+        if (existingBook) {
+            return handleError(res, 'El ISBN ya está registrado', ErrorType.CONFLICT);
+        }
+
+
       const book = new Book({
         title,
         author,

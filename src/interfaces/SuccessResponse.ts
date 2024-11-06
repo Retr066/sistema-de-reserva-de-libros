@@ -1,5 +1,8 @@
+import { SuccessType } from "@enums/SuccessType";
+
 export interface SuccessResponse<T> {
-    status: string;
-    data: T;
+    status: SuccessType;
+    statusText: string;
+    data?: T;
     message: string;
 }

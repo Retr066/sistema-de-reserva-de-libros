@@ -1,6 +1,10 @@
 import { AuthenticatedRequest } from "@interfaces/auth.interface";
 import User from "@models/User";
 import { Response } from "express";
+import { handleResponse } from "@utils/createResponse";
+import { handleError } from "@utils/handleError";
+import { ErrorType } from "@enums/ErrorType";
+import { SuccessType } from "@enums/SuccessType";
 
 const getProfile = async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -33,6 +37,18 @@ const getUsers = async (req: AuthenticatedRequest, res: Response) => {
 const createUser = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { name, email, password, identificationNumber, role } = req.body;
+        //VALIDACIONES GLOBLALES
+        const findUser = await User.findOne({ email });
+        if (findUser) {
+        return handleError(res, 'El email ya está registrado', ErrorType.CONFLICT);
+        }
+        const findIdentification = await User.findOne({
+        identificationNumber
+        });
+        if (findIdentification) {
+        return handleError(res, 'El número de identificación ya está registrado', ErrorType.CONFLICT);
+        }
+
         const user = new User({ name, email, password, identificationNumber, role });
         await user.save();
         res.status(201).json({ message: 'Usuario creado exitosamente' });

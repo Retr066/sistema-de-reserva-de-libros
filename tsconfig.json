@@ -15,6 +15,7 @@
         "@config/*": ["./src/config/*"],
         "@interfaces/*": ["./src/interfaces/*"],
         "@enums/*": ["./src/enums/*"],
+        "@schemas/*": ["./src/schemas/*"],
       },
    
     "module": "commonjs",                                /* Specify what module code is generated. */
